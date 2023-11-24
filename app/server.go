@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	OK        = "HTTP/1.1 200 OK\r\n\r\n"
-	NOT_FOUND = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
+	OK          = "HTTP/1.1 200 OK"
+	BAD_REQUEST = "HTTP/1.1 400 BAD REQUEST"
+	NOT_FOUND   = "HTTP/1.1 404 NOT FOUND"
 )
 
 func main() {
@@ -34,14 +35,26 @@ func main() {
 	request := strings.Split(requestBuilder.String(), "\r\n")
 	start_line := request[0]
 	path := strings.Split(start_line, " ")[1]
+	path_split_as_arr := strings.Split(path, "/")
+	root_path := path_split_as_arr[1]
 
 	// Write data to the connection
-	reponse := OK
-	if path != "/" {
-		reponse = NOT_FOUND
+	response := OK + "\r\n\r\n"
+	if root_path == "echo" {
+		if len(path_split_as_arr) > 2 {
+			sub_path := path_split_as_arr[2]
+			response = OK
+			response += "Content-Type: text/plain\r\n"
+			response += "Content-Length: " + strconv.Itoa(len(sub_path)) + "\r\n\r\n"
+			response += sub_path
+		} else {
+			response = BAD_REQUEST + "\r\n\r\n"
+		}
+	} else if root_path != "" {
+		response = NOT_FOUND + "\r\n\r\n"
 	}
 
-	n, err := conn.Write([]byte(reponse))
+	n, err := conn.Write([]byte(response))
 	if err != nil {
 		fmt.Println("Failed to write data to the connection")
 		os.Exit(1)
