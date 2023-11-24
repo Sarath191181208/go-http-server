@@ -9,7 +9,7 @@ TARGET = my_app
 all: $(TARGET)
 
 # Rule to build the target executable
-$(TARGET): 
+$(TARGET): ./app/server.go
 	$(GO) build $(GOFLAGS) -o $(TARGET) ./app/
 
 # Clean target: remove the target executable
