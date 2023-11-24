@@ -28,6 +28,9 @@ func main() {
 	var requestBuilder strings.Builder
 	readConnectionData(conn, bufr, &requestBuilder)
 
+	// print requestBuilder
+	fmt.Println(requestBuilder.String())
+
 	request := strings.Split(requestBuilder.String(), "\r\n")
 	start_line := request[0]
 	path := strings.Split(start_line, " ")[1]
